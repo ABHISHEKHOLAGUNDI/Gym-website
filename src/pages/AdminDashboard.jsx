@@ -129,17 +129,50 @@ const AdminDashboard = () => {
         }
     };
 
-    const shareReceiptText = () => {
-        if (!selectedMember) return;
-        const text = `🧾 *PAYMENT RECEIPT - UltimaFit*\n\n` +
-            `👤 Name: ${selectedMember.name}\n` +
-            `📅 Date: ${new Date().toLocaleDateString()}\n` +
-            `🏋️ Plan: ${selectedMember.plan_type}\n` +
-            `💰 Amount: ₹${selectedMember.amount_paid}\n` +
-            `✅ Valid Until: ${selectedMember.expiryDate.toLocaleDateString()}\n\n` +
-            `_Thank you for training with us!_ 💪`;
+    const shareReceipt = async () => {
+        if (!receiptRef.current) return;
 
-        window.open(`https://wa.me/${selectedMember.phone}?text=${encodeURIComponent(text)}`, '_blank');
+        try {
+            // Generate Image
+            const canvas = await html2canvas(receiptRef.current, {
+                backgroundColor: '#000000',
+                scale: 2
+            });
+
+            canvas.toBlob(async (blob) => {
+                if (!blob) return;
+
+                const file = new File([blob], `Receipt_${selectedMember.name.replace(/\s+/g, '_')}.png`, { type: 'image/png' });
+
+                // Try Native Share (Mobile)
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: 'UltimaFit Receipt',
+                            text: `Payment Receipt for ${selectedMember.name}`
+                        });
+                    } catch (error) {
+                        console.log('Share failed or cancelled', error);
+                    }
+                } else {
+                    // Desktop Fallback: Download & Open WhatsApp
+                    const link = document.createElement('a');
+                    link.download = file.name;
+                    link.href = canvas.toDataURL();
+                    link.click();
+
+                    alert("Image Downloaded! \n\nOpening WhatsApp... Please attach the image manually.");
+
+                    const text = `🧾 *PAYMENT RECEIPT*\nName: ${selectedMember.name}\nAmount: ₹${selectedMember.amount_paid}\n\n(Receipt Image Attached)`;
+                    window.open(`https://wa.me/${selectedMember.phone}?text=${encodeURIComponent(text)}`, '_blank');
+                }
+            });
+
+        } catch (err) {
+            console.error('Receipt generation failed', err);
+            alert('Failed to generate receipt.');
+        }
     };
 
     const filtered = members.filter(m =>
@@ -312,11 +345,8 @@ const AdminDashboard = () => {
                         </div>
 
                         <div className="receipt-actions">
-                            <button className="btn-download" onClick={downloadReceipt}>
-                                <Download size={18} /> Download Image
-                            </button>
-                            <button className="btn-whatsapp" onClick={shareReceiptText}>
-                                <Share2 size={18} /> Share Text
+                            <button className="btn-whatsapp" onClick={shareReceipt} style={{ width: '100%', justifyContent: 'center' }}>
+                                <Share2 size={18} /> Share Receipt on WhatsApp
                             </button>
                         </div>
                     </div>
