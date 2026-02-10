@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, MessageCircle, Plus, Search, RefreshCw, TrendingUp, Users, AlertTriangle } from 'lucide-react';
+import { Trash2, MessageCircle, Plus, Search, RefreshCw, TrendingUp, Users, AlertTriangle, FileText, Download, Share2, X } from 'lucide-react';
+import html2canvas from 'html2canvas';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -12,6 +13,10 @@ const AdminDashboard = () => {
 
     // Modal State
     const [showAddModal, setShowAddModal] = useState(false);
+    const [showReceiptModal, setShowReceiptModal] = useState(false);
+    const [selectedMember, setSelectedMember] = useState(null);
+    const receiptRef = useRef(null);
+
     const [newMember, setNewMember] = useState({
         name: '', phone: '', plan_type: 'Muscle Build', duration_months: 1, amount_paid: ''
     });
@@ -24,12 +29,11 @@ const AdminDashboard = () => {
         setLoading(true);
         const { data, error } = await supabase
             .from('members')
-            .select('*'); // We will sort manually in JS to handle dynamic calculated dates
+            .select('*');
 
         if (error) {
             console.error('Error fetching members:', error);
         } else {
-            // Process Data: Calculate Days Left & Sort
             const processed = (data || []).map(m => {
                 const start = new Date(m.start_date);
                 const expiry = new Date(start);
@@ -38,9 +42,7 @@ const AdminDashboard = () => {
                 return { ...m, daysLeft, expiryDate: expiry };
             });
 
-            // Sort: Critical (lowest daysLeft) first
             processed.sort((a, b) => a.daysLeft - b.daysLeft);
-
             setMembers(processed);
             calculateStats(processed);
         }
@@ -76,7 +78,7 @@ const AdminDashboard = () => {
 
     const renewMember = async (member) => {
         const newAmount = prompt(`Renew ${member.name} for another month? Enter Amount Paid:`, member.amount_paid);
-        if (newAmount === null) return; // Cancelled
+        if (newAmount === null) return;
 
         const today = new Date().toISOString().split('T')[0];
         const { error } = await supabase
@@ -84,7 +86,7 @@ const AdminDashboard = () => {
             .update({
                 start_date: today,
                 amount_paid: newAmount,
-                duration_months: 1 // Reset to 1 month default on renew, or keep previous? Let's default to a 1 month renewal
+                duration_months: 1
             })
             .eq('id', member.id);
 
@@ -102,6 +104,42 @@ const AdminDashboard = () => {
         else if (member.daysLeft <= 5) message += ` Only ${member.daysLeft} days left. Renew now!`;
 
         window.open(`https://wa.me/${member.phone}?text=${encodeURIComponent(message)}`, '_blank');
+    };
+
+    // Receipt Functions
+    const openReceipt = (member) => {
+        setSelectedMember(member);
+        setShowReceiptModal(true);
+    };
+
+    const downloadReceipt = async () => {
+        if (!receiptRef.current) return;
+        try {
+            const canvas = await html2canvas(receiptRef.current, {
+                backgroundColor: '#000000',
+                scale: 2 // High Resolution
+            });
+            const link = document.createElement('a');
+            link.download = `Receipt_${selectedMember.name.replace(/\s+/g, '_')}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        } catch (err) {
+            console.error('Receipt generation failed', err);
+            alert('Failed to generate receipt image.');
+        }
+    };
+
+    const shareReceiptText = () => {
+        if (!selectedMember) return;
+        const text = `🧾 *PAYMENT RECEIPT - UltimaFit*\n\n` +
+            `👤 Name: ${selectedMember.name}\n` +
+            `📅 Date: ${new Date().toLocaleDateString()}\n` +
+            `🏋️ Plan: ${selectedMember.plan_type}\n` +
+            `💰 Amount: ₹${selectedMember.amount_paid}\n` +
+            `✅ Valid Until: ${selectedMember.expiryDate.toLocaleDateString()}\n\n` +
+            `_Thank you for training with us!_ 💪`;
+
+        window.open(`https://wa.me/${selectedMember.phone}?text=${encodeURIComponent(text)}`, '_blank');
     };
 
     const filtered = members.filter(m =>
@@ -156,7 +194,6 @@ const AdminDashboard = () => {
                 <div className="members-grid">
                     <AnimatePresence>
                         {filtered.map(member => {
-                            // Determine Status Color
                             let statusClass = 'status-safe';
                             if (member.daysLeft < 0) statusClass = 'status-expired';
                             else if (member.daysLeft <= 5) statusClass = 'status-critical';
@@ -190,6 +227,9 @@ const AdminDashboard = () => {
                                         <button className="action-btn whatsapp" onClick={() => sendWhatsApp(member)} title="Send Reminder">
                                             <MessageCircle size={18} />
                                         </button>
+                                        <button className="action-btn receipt" onClick={() => openReceipt(member)} title="Generate Bill">
+                                            <FileText size={18} />
+                                        </button>
                                         <button className="action-btn renew" onClick={() => renewMember(member)} title="Renew Subscription">
                                             <RefreshCw size={18} />
                                         </button>
@@ -204,7 +244,7 @@ const AdminDashboard = () => {
                 </div>
             )}
 
-            {/* Modal Logic (Same as before) */}
+            {/* Add Member Modal */}
             {showAddModal && (
                 <div className="modal-overlay">
                     <div className="modal-content">
@@ -224,6 +264,61 @@ const AdminDashboard = () => {
                                 <button type="submit" className="btn-primary">Add</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Receipt Modal */}
+            {showReceiptModal && selectedMember && (
+                <div className="modal-overlay">
+                    <div className="receipt-modal-content">
+                        <button className="close-btn" onClick={() => setShowReceiptModal(false)}><X size={20} /></button>
+
+                        <div ref={receiptRef} className="receipt-paper">
+                            <div className="receipt-header">
+                                <h2>ULTIMA<span className="highlight">FIT</span></h2>
+                                <p>OFFICIAL RECEIPT</p>
+                            </div>
+                            <div className="receipt-body">
+                                <div className="receipt-row">
+                                    <span>Member:</span>
+                                    <strong>{selectedMember.name}</strong>
+                                </div>
+                                <div className="receipt-row">
+                                    <span>Plan:</span>
+                                    <strong>{selectedMember.plan_type}</strong>
+                                </div>
+                                <div className="receipt-row">
+                                    <span>Duration:</span>
+                                    <strong>{selectedMember.duration_months} Month(s)</strong>
+                                </div>
+                                <div className="receipt-row">
+                                    <span>Valid Until:</span>
+                                    <strong>{selectedMember.expiryDate.toLocaleDateString()}</strong>
+                                </div>
+                                <div className="receipt-divider"></div>
+                                <div className="receipt-total">
+                                    <span>AMOUNT PAID</span>
+                                    <span className="amount">₹{selectedMember.amount_paid}</span>
+                                </div>
+                                <div className="receipt-status">
+                                    PAID ✅
+                                </div>
+                            </div>
+                            <div className="receipt-footer">
+                                <p>Thank you for training with us!</p>
+                                <p className="small">Generated on {new Date().toLocaleDateString()}</p>
+                            </div>
+                        </div>
+
+                        <div className="receipt-actions">
+                            <button className="btn-download" onClick={downloadReceipt}>
+                                <Download size={18} /> Download Image
+                            </button>
+                            <button className="btn-whatsapp" onClick={shareReceiptText}>
+                                <Share2 size={18} /> Share Text
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
