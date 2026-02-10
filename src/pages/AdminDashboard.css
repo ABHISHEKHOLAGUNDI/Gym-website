@@ -284,10 +284,10 @@
 
 /* Grid Actions */
 .card-actions-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    display: flex;
     gap: 0.5rem;
     margin-top: 1.5rem;
+    flex-wrap: wrap;
 }
 
 .action-btn {
@@ -633,62 +633,120 @@
     margin-bottom: 0.5rem;
 }
 
+/* Header Actions */
+.header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* Dashboard Filters Row */
+.dashboard-actions-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background: #111;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid #333;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    flex: 2;
+    min-width: 200px;
+    position: relative;
+    margin-top: 0;
+    /* Reset margin */
+}
+
+.filter-select {
+    flex: 1;
+    min-width: 150px;
+    margin-top: 0;
+    /* Reset margin */
+    padding: 12px;
+}
+
+/* Updated Card Actions */
+.card-actions-grid {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    flex: 1;
+    min-width: 32px;
+    height: 36px;
+    padding: 0;
+    /* Icon center */
+}
+
+.recovery-btn {
+    width: 100%;
+    font-weight: bold;
+    gap: 8px;
+}
+
 /* Equipment Grid */
 .equipment-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
+    margin-bottom: 3rem;
 }
 
 .equipment-card {
-    background: #1a1a1a;
+    background: #151515;
     padding: 1.5rem;
-    border-radius: 12px;
+    border-radius: 16px;
     border: 1px solid #333;
     cursor: pointer;
     transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 140px;
 }
 
 .equipment-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-5px);
+    border-color: #555;
 }
 
-.equipment-card.working {
-    border-left: 4px solid #2ecc71;
+.equipment-card h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
 }
 
-.equipment-card.maintenance {
-    border-left: 4px solid #f1c40f;
+.equipment-card p {
+    color: #888;
+    font-size: 0.9rem;
+    margin: 0;
 }
 
-.equipment-card.broken {
-    border-left: 4px solid #e74c3c;
+.equipment-card small {
+    display: block;
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.status-badge {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    color: black;
-}
-
-.status-badge.working {
-    background: #2ecc71;
-}
-
-.status-badge.maintenance {
-    background: #f1c40f;
-}
-
-.status-badge.broken {
-    background: #e74c3c;
-    color: white;
-}
-
-.eq-header {
-    display: flex;
-    justify-content: space-between;
+/* Add New Machine Card */
+.equipment-card.add-new {
+    border: 2px dashed #444;
+    background: transparent;
     align-items: center;
-    margin-bottom: 1rem;
+    justify-content: center;
+    color: #666;
+}
+
+.equipment-card.add-new:hover {
+    border-color: var(--gold);
+    color: var(--gold);
 }
