@@ -223,10 +223,41 @@ const AdminDashboard = () => {
     const downloadTransformation = async () => {
         if (!transRef.current) return;
         try {
-            const canvas = await html2canvas(transRef.current, { backgroundColor: '#000000', scale: 2, useCORS: true });
+            // Clone the element to enforce desktop sizing during capture
+            const original = transRef.current;
+            const clone = original.cloneNode(true);
+
+            // Set fixed dimensions for high-quality Instagram square
+            clone.style.width = "1080px";
+            clone.style.height = "1080px";
+            clone.style.position = "absolute";
+            clone.style.top = "-9999px"; // Hide it
+            clone.style.left = "-9999px";
+            clone.style.transform = "none"; // Remove any scaling
+            document.body.appendChild(clone);
+
+            // Wait for images in clone to load (if any)
+            const images = clone.getElementsByTagName('img');
+            await Promise.all(Array.from(images).map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise(resolve => { img.onload = resolve; img.onerror = resolve; });
+            }));
+
+            // Capture the clone
+            const canvas = await html2canvas(clone, {
+                backgroundColor: '#000000',
+                scale: 1, // 1:1 scale since we set it to 1080px
+                useCORS: true,
+                width: 1080,
+                height: 1080
+            });
+
+            // Clean up
+            document.body.removeChild(clone);
+
             const link = document.createElement('a');
             link.download = `Transformation-${transData.name || 'Member'}.png`;
-            link.href = canvas.toDataURL();
+            link.href = canvas.toDataURL('image/png', 1.0);
             link.click();
         } catch (err) { console.error(err); alert('Failed to generate image.'); }
     };
