@@ -282,91 +282,207 @@
     font-size: 0.9rem;
 }
 
-/* Grid Actions */
+/* Grid Actions - Premium Update */
 .card-actions-grid {
-    display: flex;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* 4 across on desktop */
+    gap: 0.8rem;
     margin-top: 1.5rem;
-    flex-wrap: wrap;
 }
 
 .action-btn {
     border: none;
-    padding: 8px;
-    border-radius: 6px;
+    padding: 10px;
+    border-radius: 10px;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: transform 0.2s;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     color: white;
-    height: 36px;
+    height: 45px;
+    /* Larger touch target */
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.action-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
 }
 
 .action-btn:hover {
-    transform: scale(1.1);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
 }
 
+.action-btn:hover::after {
+    opacity: 1;
+}
+
+.action-btn:active {
+    transform: scale(0.95);
+}
+
+/* Specific PREMIUM Colors & Glows */
 .whatsapp {
-    background: #25D366;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    box-shadow: 0 0 10px rgba(37, 211, 102, 0.3);
+}
+
+.whatsapp:hover {
+    box-shadow: 0 0 20px rgba(37, 211, 102, 0.6);
 }
 
 .renew {
-    background: #3498db;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+}
+
+.renew:hover {
+    box-shadow: 0 0 20px rgba(52, 152, 219, 0.6);
 }
 
 .receipt {
-    background: #9b59b6;
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    box-shadow: 0 0 10px rgba(155, 89, 182, 0.3);
+}
+
+.receipt:hover {
+    box-shadow: 0 0 20px rgba(155, 89, 182, 0.6);
 }
 
 .delete {
-    background: #333;
+    background: linear-gradient(135deg, #333, #000);
     color: #ff5555;
+    border: 1px solid #444;
+}
+
+.delete:hover {
+    background: #c0392b;
+    color: white;
+    box-shadow: 0 0 15px rgba(231, 76, 60, 0.5);
+    border-color: #c0392b;
 }
 
 .mom {
-    background: #444;
+    background: linear-gradient(135deg, #444, #222);
+    color: #777;
+}
+
+.mom:hover {
     color: var(--gold);
 }
 
 .mom.active {
-    background: var(--gold);
+    background: linear-gradient(135deg, var(--gold), #b8860b);
     color: black;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+    animation: pulse-gold 2s infinite;
+}
+
+/* Trainer Button (User Request Highlight) */
+.trainer {
+    background: linear-gradient(135deg, #e67e22, #d35400);
+    box-shadow: 0 0 10px rgba(230, 126, 34, 0.4);
+}
+
+.trainer:hover {
+    box-shadow: 0 0 20px rgba(230, 126, 34, 0.7);
+    filter: brightness(1.2);
 }
 
 .diet {
-    background: #e67e22;
+    background: linear-gradient(135deg, #1abc9c, #16a085);
     position: relative;
+    box-shadow: 0 0 10px rgba(26, 188, 156, 0.3);
 }
 
-/* Dropdown */
-.diet-dropdown:hover .diet-content {
-    display: block;
+.diet:hover {
+    box-shadow: 0 0 20px rgba(26, 188, 156, 0.6);
+}
+
+/* Diet Dropdown fixes */
+.diet-dropdown {
+    position: relative;
+    grid-column: span 1;
+    /* Ensure it takes one slot */
 }
 
 .diet-content {
     display: none;
     position: absolute;
-    bottom: 100%;
+    bottom: 110%;
+    /* Move up slightly */
     left: 50%;
     transform: translateX(-50%);
-    background: #111;
-    border: 1px solid #333;
+    background: #1a1a1a;
+    border: 1px solid var(--gold);
     border-radius: 8px;
-    width: 120px;
-    z-index: 10;
+    width: 140px;
+    z-index: 100;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    overflow: hidden;
 }
 
 .diet-content span {
     display: block;
-    padding: 8px;
-    font-size: 0.8rem;
+    padding: 12px;
+    font-size: 0.9rem;
     cursor: pointer;
     color: white;
+    border-bottom: 1px solid #333;
+    transition: background 0.2s;
+}
+
+.diet-content span:last-child {
+    border-bottom: none;
 }
 
 .diet-content span:hover {
-    background: #222;
+    background: var(--gold);
+    color: black;
+    font-weight: bold;
+}
+
+.diet-dropdown:hover .diet-content {
+    display: block;
+    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+@keyframes pulse-gold {
+    0% {
+        box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(212, 175, 55, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
+    }
 }
 
 /* Birthday Banner */
