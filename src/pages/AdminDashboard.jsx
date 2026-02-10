@@ -7,6 +7,7 @@ import html2canvas from 'html2canvas';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
+    // Last Updated: Fix UI Artifacts
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
