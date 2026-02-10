@@ -32,25 +32,36 @@ const Footer = () => {
                     <p>Designed with power.</p>
 
                     {/* Hidden Admin Button */}
+                    {/* Hidden Admin Button */}
                     <button
                         onClick={handleAdminAccess}
                         style={{
                             background: 'transparent',
-                            border: 'none',
+                            border: '1px solid rgba(255,255,255,0.1)', // Subtle border
+                            borderRadius: '5px',
                             cursor: 'pointer',
-                            opacity: 0.1,
-                            color: '#333',
+                            opacity: 0.3, // Increased opacity from 0.1
+                            color: '#555', // Slightly lighter color
                             transition: 'all 0.3s',
                             marginTop: '1rem',
+                            padding: '5px 10px',
                             display: 'flex',
                             alignItems: 'center',
                             gap: '5px'
                         }}
-                        onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = '#e74c3c'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.1'; e.currentTarget.style.color = '#333'; }}
-                        title="Owner Access"
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.opacity = '1';
+                            e.currentTarget.style.color = '#e74c3c';
+                            e.currentTarget.style.borderColor = '#e74c3c';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.opacity = '0.3';
+                            e.currentTarget.style.color = '#555';
+                            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+                        }}
+                        title="Owner Access - Click Here"
                     >
-                        <Lock size={12} /> <span style={{ fontSize: '0.7rem' }}>Admin</span>
+                        <Lock size={12} /> <span style={{ fontSize: '0.7rem' }}>Admin Login</span>
                     </button>
                 </div>
             </div>
