@@ -32,10 +32,10 @@ const BMISection = () => {
                     className="bmi-container glass-panel"
                 >
                     <div className="bmi-content">
-                        <h2 className="section-title" style={{ textAlign: 'left', fontSize: '2.5rem' }}>
+                        <h2 className="section-title bmi-title">
                             Iron <span className="neon-text">Intelligence</span>
                         </h2>
-                        <p className="section-subtitle" style={{ textAlign: 'left', margin: '0 0 2rem 0' }}>
+                        <p className="section-subtitle bmi-subtitle">
                             Calculate your body mass index to plan your transformation journey.
                         </p>
 

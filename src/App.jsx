@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Lenis from 'lenis';
 import Navbar from './components/Navbar';
 import HeroSection from './sections/HeroSection';
@@ -11,10 +12,11 @@ import CafeSection from './sections/CafeSection';
 import ShopSection from './sections/ShopSection';
 import Footer from './components/Footer';
 import Preloader from './components/Preloader';
-
 import PlanSelection from './components/PlanSelection';
+import AdminDashboard from './pages/AdminDashboard';
 
-function App() {
+// This is the main landing page with all the animations and sections
+const LandingPage = () => {
   const [loading, setLoading] = useState(true);
   const [showPlans, setShowPlans] = useState(false);
 
@@ -68,6 +70,18 @@ function App() {
         <PlanSelection isOpen={showPlans} onClose={() => setShowPlans(false)} />
       </div>
     </>
+  );
+};
+
+// Main App Component with Routing
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+      </Routes>
+    </Router>
   );
 }
 
