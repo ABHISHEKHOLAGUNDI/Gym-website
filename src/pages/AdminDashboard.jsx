@@ -205,6 +205,32 @@ const AdminDashboard = () => {
         { id: 4, name: 'Leg Press', status: 'Broken', lastService: '2024-11-15' },
     ]);
 
+    // Transformation Generator State
+    const [transData, setTransData] = useState({ before: null, after: null, name: '' });
+    const transRef = useRef(null);
+
+    const handleImageUpload = (e, type) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setTransData(prev => ({ ...prev, [type]: reader.result }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const downloadTransformation = async () => {
+        if (!transRef.current) return;
+        try {
+            const canvas = await html2canvas(transRef.current, { backgroundColor: '#000000', scale: 2, useCORS: true });
+            const link = document.createElement('a');
+            link.download = `Transformation-${transData.name || 'Member'}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        } catch (err) { console.error(err); alert('Failed to generate image.'); }
+    };
+
     const toggleEquipmentStatus = (id) => {
         setEquipment(equipment.map(e => {
             if (e.id === id) {
@@ -229,6 +255,7 @@ const AdminDashboard = () => {
 
         if (viewMode === 'lost') return matchesSearch && isLost;
         if (viewMode === 'equipment') return false; // Handled separately
+        if (viewMode === 'transformation') return false;
         return matchesSearch && matchesTrainer && !isLost;
     });
 
@@ -242,10 +269,13 @@ const AdminDashboard = () => {
             <div className="admin-header">
                 <h1>Gym Manager <span className="highlight-gold">PRO+</span></h1>
                 <div className="header-actions">
+                    <button className="btn-secondary" onClick={() => setViewMode('transformation')} style={{ marginRight: '10px', border: viewMode === 'transformation' ? '1px solid gold' : 'none' }}>
+                        📸 Posters
+                    </button>
                     <button className="btn-secondary" onClick={() => setViewMode(viewMode === 'equipment' ? 'active' : 'equipment')} style={{ marginRight: '10px' }}>
                         {viewMode === 'equipment' ? '👥 Members' : '🛠️ Machines'}
                     </button>
-                    <button className="btn-secondary" onClick={() => setViewMode(viewMode === 'active' ? 'lost' : 'active')} style={{ marginRight: '10px', border: viewMode === 'lost' ? '1px solid red' : 'none', display: viewMode === 'equipment' ? 'none' : 'flex' }}>
+                    <button className="btn-secondary" onClick={() => setViewMode(viewMode === 'active' ? 'lost' : 'active')} style={{ marginRight: '10px', border: viewMode === 'lost' ? '1px solid red' : 'none', display: (viewMode === 'equipment' || viewMode === 'transformation') ? 'none' : 'flex' }}>
                         {viewMode === 'active' ? `💀 Lost Members (${lostCount})` : '💪 Active Members'}
                     </button>
                     <button className="btn-secondary" onClick={sendBulkAlert} style={{ marginRight: '10px' }}>
@@ -301,6 +331,47 @@ const AdminDashboard = () => {
                 </div>
             )}
 
+            {/* View Mode: Transformation Generator */}
+            {viewMode === 'transformation' && (
+                <div className="transformation-section">
+                    <div className="trans-controls">
+                        <h2>Create Transformation Poster</h2>
+                        <input type="text" placeholder="Member Name" value={transData.name} onChange={e => setTransData({ ...transData, name: e.target.value })} />
+                        <div className="file-inputs">
+                            <label>Before Image <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'before')} /></label>
+                            <label>After Image <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'after')} /></label>
+                        </div>
+                        <button className="btn-primary" onClick={downloadTransformation}><Download size={18} /> Download Poster</button>
+                    </div>
+
+                    <div className="trans-preview-container">
+                        <div ref={transRef} className="trans-poster">
+                            <div className="poster-header">
+                                <h2>ULTIMA<span className="highlight-gold">FIT</span></h2>
+                                <p>TRANSFORMATION</p>
+                            </div>
+                            <div className="poster-images">
+                                <div className="p-img-box">
+                                    <span>BEFORE</span>
+                                    {transData.before ? <img src={transData.before} alt="Before" /> : <div className="placeholder">Upload Photo</div>}
+                                </div>
+                                <div className="p-divider">
+                                    <div className="arrow">➜</div>
+                                </div>
+                                <div className="p-img-box">
+                                    <span>AFTER</span>
+                                    {transData.after ? <img src={transData.after} alt="After" /> : <div className="placeholder">Upload Photo</div>}
+                                </div>
+                            </div>
+                            <div className="poster-footer">
+                                <h3>{transData.name || 'Dedication'}</h3>
+                                <p>#UltimaTransformation</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* View Mode: Equipment */}
             {viewMode === 'equipment' && (
                 <div className="equipment-grid">
@@ -321,10 +392,10 @@ const AdminDashboard = () => {
                 </div>
             )}
 
-            {/* Member Grid (Hidden in Equipment View) */}
+            {/* Member Grid (Hidden in Equipment/Transformation View) */}
             {loading ? <div className="loading">Syncing...</div> : (
                 <>
-                    {viewMode !== 'equipment' && (
+                    {viewMode !== 'equipment' && viewMode !== 'transformation' && (
                         <div className="members-grid">
                             <AnimatePresence>
                                 {filtered.map(member => {
