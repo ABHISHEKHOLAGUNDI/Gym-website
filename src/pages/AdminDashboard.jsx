@@ -440,17 +440,10 @@ const AdminDashboard = () => {
                                             {member.is_mom && <div className="mom-badge"><Star size={12} fill="black" /> STAR MEMBER</div>}
 
                                             <div className="card-top">
-                                                <div className="member-info-header">
-                                                    {member.photo ? (
-                                                        <img src={member.photo} alt={member.name} className="member-avatar" />
-                                                    ) : (
-                                                        <div className="member-avatar-placeholder">{member.name.charAt(0)}</div>
-                                                    )}
-                                                    <div>
-                                                        <h3>{member.name} {member.is_mom && '⭐'}</h3>
-                                                        <span className="plan-pill">{member.plan_type}</span>
-                                                        <span className="trainer-pill">👨‍🏫 {member.trainer_name || 'No Trainer'}</span>
-                                                    </div>
+                                                <div>
+                                                    <h3>{member.name} {member.is_mom && '⭐'}</h3>
+                                                    <span className="plan-pill">{member.plan_type}</span>
+                                                    <span className="trainer-pill">👨‍🏫 {member.trainer_name || 'No Trainer'}</span>
                                                 </div>
                                                 <div className="days-badge">
                                                     {member.daysLeft < 0 ? 'EXPIRED' : `${member.daysLeft} Days`}
@@ -503,22 +496,6 @@ const AdminDashboard = () => {
                         <form onSubmit={addMember}>
                             <input type="text" placeholder="Name" required value={newMember.name} onChange={e => setNewMember({ ...newMember, name: e.target.value })} />
                             <input type="tel" placeholder="Phone" required value={newMember.phone} onChange={e => setNewMember({ ...newMember, phone: e.target.value })} />
-
-                            <label style={{ fontSize: '0.8rem', color: '#888' }}>Profile Photo</label>
-                            <div className="photo-upload-field">
-                                <label className="custom-file-upload">
-                                    <input type="file" accept="image/*" onChange={(e) => {
-                                        const file = e.target.files[0];
-                                        if (file) {
-                                            const reader = new FileReader();
-                                            reader.onloadend = () => setNewMember({ ...newMember, photo: reader.result });
-                                            reader.readAsDataURL(file);
-                                        }
-                                    }} />
-                                    {newMember.photo ? 'Change Photo' : 'Upload Photo'}
-                                </label>
-                                {newMember.photo && <img src={newMember.photo} alt="Preview" className="photo-preview-small" />}
-                            </div>
 
                             <label style={{ fontSize: '0.8rem', color: '#888' }}>Date of Birth</label>
                             <input type="date" value={newMember.dob} onChange={e => setNewMember({ ...newMember, dob: e.target.value })} />
