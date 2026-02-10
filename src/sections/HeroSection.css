@@ -1,0 +1,140 @@
+.hero-section {
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    /* Align content to bottom */
+    justify-content: flex-start;
+    /* Align content to left */
+    overflow: hidden;
+    padding-bottom: 6rem;
+    /* Add spacing from bottom */
+}
+
+.video-bg-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.hero-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Darker gradient at bottom for text readability */
+    background: linear-gradient(to bottom,
+            rgba(5, 5, 5, 0.3) 0%,
+            rgba(5, 5, 5, 0.6) 50%,
+            rgba(0, 0, 0, 0.95) 100%);
+    z-index: 1;
+}
+
+.hero-3d-bg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    /* Position to right */
+    width: 40%;
+    /* Smaller width */
+    height: 60%;
+    /* Not full height */
+    z-index: 2;
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+    max-width: 800px;
+    margin-left: 5%;
+    /* Spacing from left edge */
+}
+
+.hero-title {
+    font-size: 5rem;
+    line-height: 0.9;
+    margin-bottom: 1.5rem;
+    /* Stronger drop shadow for contrast */
+    text-shadow: 0 10px 30px rgba(0, 0, 0, 1);
+    text-align: left;
+    color: white;
+}
+
+.hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    max-width: 500px;
+    line-height: 1.6;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 1);
+    text-align: left;
+    background: rgba(0, 0, 0, 0.6);
+    /* Darker background for text box */
+    padding: 1.5rem;
+    backdrop-filter: blur(8px);
+    border-radius: 8px;
+    border-left: 3px solid var(--gold);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+}
+
+.hero-btn {
+    font-size: 1rem;
+    padding: 1rem 2.5rem;
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding-bottom: 8rem;
+        /* More space on mobile for nav */
+        align-items: center;
+        /* Center on mobile usually looks better */
+        justify-content: center;
+    }
+
+    .hero-content {
+        margin-left: 0;
+        text-align: center;
+        padding: 0 1rem;
+        width: 100%;
+        margin-top: 10vh;
+        /* Push down a bit */
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+        /* Large but fits vertical screens */
+        line-height: 1.1;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+        text-align: center;
+        margin: 0 auto 2.5rem auto;
+        max-width: 90%;
+        padding: 1.2rem;
+        border-left: none;
+        /* Remove side border for cleaner centered look */
+        border-bottom: 3px solid var(--gold);
+        /* Move accent to bottom */
+    }
+
+    .hero-3d-bg {
+        display: none;
+        /* Ensure it's gone if any remnants exist */
+    }
+}
