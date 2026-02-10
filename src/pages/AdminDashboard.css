@@ -91,34 +91,95 @@
     }
 }
 
-.search-bar {
-    max-width: 600px;
-    margin: 0 auto 2rem;
+/* Layout Grid */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-middle-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    align-items: start;
+}
+
+.chart-container {
+    background: #151515;
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.actions-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.birthday-banner-compact {
+    background: linear-gradient(90deg, #c0392b, #8e44ad);
+    padding: 1rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: white;
+    border: 1px solid #e74c3c;
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.2);
+}
+
+.filters-container {
+    background: #151515;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #222;
+}
+
+.search-box {
     position: relative;
+    margin-top: 0.5rem;
 }
 
 .search-icon {
     position: absolute;
-    left: 15px;
+    left: 12px;
     top: 50%;
     transform: translateY(-50%);
     color: #666;
 }
 
-.search-bar input {
+.search-box input {
     width: 100%;
-    padding: 12px 12px 12px 45px;
-    background: #111;
+    padding: 10px 10px 10px 40px;
+    background: #0a0a0a;
     border: 1px solid #333;
+    border-radius: 8px;
     color: white;
-    border-radius: 30px;
-    font-size: 1rem;
-    transition: all 0.3s;
 }
 
-.search-bar input:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+.filter-select {
+    width: 100%;
+    padding: 10px;
+    background: #0a0a0a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: white;
+    margin-top: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-middle-section {
+        grid-template-columns: 1fr;
+    }
 }
 
 .members-grid {
