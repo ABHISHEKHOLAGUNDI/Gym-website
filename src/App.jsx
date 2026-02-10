@@ -58,6 +58,7 @@ const LandingPage = () => {
         <Navbar onJoinClick={() => setShowPlans(true)} />
         <main>
           <HeroSection onJoinClick={() => setShowPlans(true)} />
+          <MemberSpotlight />
           <GymSection />
           <CafeSection />
           <ShopSection />
