@@ -218,45 +218,36 @@ const AdminDashboard = () => {
                 </div>
             </div>
 
-            {/* Birthday Alert */}
-            {birthdaysToday.length > 0 && (
-                <div className="birthday-banner">
-                    <Gift className="type-pulse" size={24} />
-                    <span>Birthdays Today: {birthdaysToday.map(m => m.name).join(', ')} - Wish them now! 🎂</span>
+            {/* Top Stats Row */}
+            <div className="stats-container">
+                <div className="stat-card">
+                    <TrendingUp className="stat-icon gold" />
+                    <div><h3>₹{stats.revenue.toLocaleString()}</h3><p>Total Revenue</p></div>
                 </div>
-            )}
-
-            {/* Analytics Section (Phase 2) */}
-            <div className="analytics-section">
-                <div className="chart-container">
-                    <h3>📊 Plan Popularity</h3>
-                    <div style={{ width: '100%', height: 250 }}>
-                        <ResponsiveContainer>
-                            <PieChart>
-                                <Pie data={planData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
-                                    {planData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip contentStyle={{ backgroundColor: '#000', border: '1px solid gold' }} itemStyle={{ color: 'white' }} />
-                                <Legend />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    </div>
+                <div className="stat-card">
+                    <Users className="stat-icon blue" />
+                    <div><h3>{stats.active}</h3><p>Active Members</p></div>
                 </div>
-
-                <div className="stats-grid-compact">
-                    <div className="stat-card"><TrendingUp className="stat-icon gold" /><div><h3>₹{stats.revenue.toLocaleString()}</h3><p>Revenue</p></div></div>
-                    <div className="stat-card"><Users className="stat-icon blue" /><div><h3>{stats.active}</h3><p>Active</p></div></div>
-                    <div className="stat-card"><AlertTriangle className={`stat-icon ${stats.critical > 0 ? 'red-pulse' : 'green'}`} /><div><h3>{stats.critical}</h3><p>Expiring</p></div></div>
+                <div className="stat-card">
+                    <AlertTriangle className={`stat-icon ${stats.critical > 0 ? 'red-pulse' : 'green'}`} />
+                    <div><h3>{stats.critical}</h3><p>Expiring Soon</p></div>
                 </div>
             </div>
 
-            <div className="filters-bar">
-                <div className="search-bar">
-                    <Search size={20} className="search-icon" />
-                    <input type="text" placeholder="Search members..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+            {/* Actions Panel (Search + Filter + Birthdays) */}
+            <div className="dashboard-actions-row">
+                {birthdaysToday.length > 0 && (
+                    <div className="birthday-chip">
+                        <Gift className="type-pulse" size={18} />
+                        <span>{birthdaysToday.length} Birthday{birthdaysToday.length > 1 ? 's' : ''} Today!</span>
+                    </div>
+                )}
+
+                <div className="search-box">
+                    <Search size={18} className="search-icon" />
+                    <input type="text" placeholder="Search name or phone..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                 </div>
+
                 <select className="filter-select" value={filterTrainer} onChange={e => setFilterTrainer(e.target.value)}>
                     {uniqueTrainers.map(t => <option key={t} value={t}>{t === 'All' ? '👨‍🏫 All Trainers' : `👨‍🏫 ${t}`}</option>)}
                 </select>
