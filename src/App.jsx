@@ -4,7 +4,7 @@ import Lenis from 'lenis';
 import Navbar from './components/Navbar';
 import HeroSection from './sections/HeroSection';
 import GymSection from './sections/GymSection';
-import ClassScheduleSection from './sections/ClassScheduleSection';
+
 import MemberSpotlight from './sections/MemberSpotlight';
 import BMISection from './sections/BMISection';
 import TransformationSection from './sections/TransformationSection';
@@ -62,7 +62,7 @@ const LandingPage = () => {
           <GymSection />
           <CafeSection />
           <ShopSection />
-          <ClassScheduleSection />
+
           <BMISection />
           <TransformationSection />
           <LocationSection />
