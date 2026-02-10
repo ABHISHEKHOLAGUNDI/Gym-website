@@ -632,3 +632,63 @@
     color: #e74c3c;
     margin-bottom: 0.5rem;
 }
+
+/* Equipment Grid */
+.equipment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.equipment-card {
+    background: #1a1a1a;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #333;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.equipment-card:hover {
+    transform: translateY(-3px);
+}
+
+.equipment-card.working {
+    border-left: 4px solid #2ecc71;
+}
+
+.equipment-card.maintenance {
+    border-left: 4px solid #f1c40f;
+}
+
+.equipment-card.broken {
+    border-left: 4px solid #e74c3c;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: black;
+}
+
+.status-badge.working {
+    background: #2ecc71;
+}
+
+.status-badge.maintenance {
+    background: #f1c40f;
+}
+
+.status-badge.broken {
+    background: #e74c3c;
+    color: white;
+}
+
+.eq-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}

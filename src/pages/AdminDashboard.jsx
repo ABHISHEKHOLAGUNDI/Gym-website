@@ -195,11 +195,44 @@ const AdminDashboard = () => {
         } catch (err) { alert('Failed to generate receipt.'); }
     };
 
+    const [viewMode, setViewMode] = useState('active'); // 'active' | 'lost' | 'equipment'
+
+    // Equipment Data (Mock for now, can be DB later)
+    const [equipment, setEquipment] = useState([
+        { id: 1, name: 'Treadmill 1', status: 'Working', lastService: '2025-01-10' },
+        { id: 2, name: 'Cable Crossover', status: 'Maintenance', lastService: '2024-12-20' },
+        { id: 3, name: 'Smith Machine', status: 'Working', lastService: '2025-02-01' },
+        { id: 4, name: 'Leg Press', status: 'Broken', lastService: '2024-11-15' },
+    ]);
+
+    const toggleEquipmentStatus = (id) => {
+        setEquipment(equipment.map(e => {
+            if (e.id === id) {
+                const nextStatus = e.status === 'Working' ? 'Maintenance' : e.status === 'Maintenance' ? 'Broken' : 'Working';
+                return { ...e, status: nextStatus, lastService: nextStatus === 'Working' ? new Date().toISOString().split('T')[0] : e.lastService };
+            }
+            return e;
+        }));
+    };
+
+    const sendRecoveryMessage = (member) => {
+        const msg = `Hey ${member.name}! It's been a while since we saw you at UltimaFit. 🏋️‍♂️\n\nWe miss your energy! Come back this week and get a *Special Renewal Discount*. Let's get back on track! 💪`;
+        window.open(`https://wa.me/${member.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+    };
+
     const filtered = members.filter(m => {
         const matchesSearch = m.name.toLowerCase().includes(searchTerm.toLowerCase()) || m.phone.includes(searchTerm);
         const matchesTrainer = filterTrainer === 'All' || (m.trainer_name && m.trainer_name.toLowerCase() === filterTrainer.toLowerCase());
-        return matchesSearch && matchesTrainer;
+
+        // Lost Member Logic: Expired more than 30 days ago
+        const isLost = m.daysLeft < -30;
+
+        if (viewMode === 'lost') return matchesSearch && isLost;
+        if (viewMode === 'equipment') return false; // Handled separately
+        return matchesSearch && matchesTrainer && !isLost;
     });
+
+    const lostCount = members.filter(m => m.daysLeft < -30).length;
 
     // Get Unique Trainers for Filter
     const uniqueTrainers = ['All', ...new Set(members.map(m => m.trainer_name).filter(t => t && t !== 'Unassigned'))];
@@ -209,6 +242,12 @@ const AdminDashboard = () => {
             <div className="admin-header">
                 <h1>Gym Manager <span className="highlight-gold">PRO+</span></h1>
                 <div className="header-actions">
+                    <button className="btn-secondary" onClick={() => setViewMode(viewMode === 'equipment' ? 'active' : 'equipment')} style={{ marginRight: '10px' }}>
+                        {viewMode === 'equipment' ? '👥 Members' : '🛠️ Machines'}
+                    </button>
+                    <button className="btn-secondary" onClick={() => setViewMode(viewMode === 'active' ? 'lost' : 'active')} style={{ marginRight: '10px', border: viewMode === 'lost' ? '1px solid red' : 'none', display: viewMode === 'equipment' ? 'none' : 'flex' }}>
+                        {viewMode === 'active' ? `💀 Lost Members (${lostCount})` : '💪 Active Members'}
+                    </button>
                     <button className="btn-secondary" onClick={sendBulkAlert} style={{ marginRight: '10px' }}>
                         <Megaphone size={18} /> Bulk Alert
                     </button>
@@ -218,99 +257,133 @@ const AdminDashboard = () => {
                 </div>
             </div>
 
-            {/* Top Stats Row */}
-            <div className="stats-container">
-                <div className="stat-card">
-                    <TrendingUp className="stat-icon gold" />
-                    <div><h3>₹{stats.revenue.toLocaleString()}</h3><p>Total Revenue</p></div>
-                </div>
-                <div className="stat-card">
-                    <Users className="stat-icon blue" />
-                    <div><h3>{stats.active}</h3><p>Active Members</p></div>
-                </div>
-                <div className="stat-card">
-                    <AlertTriangle className={`stat-icon ${stats.critical > 0 ? 'red-pulse' : 'green'}`} />
-                    <div><h3>{stats.critical}</h3><p>Expiring Soon</p></div>
-                </div>
-            </div>
-
-            {/* Actions Panel (Search + Filter + Birthdays) */}
-            <div className="dashboard-actions-row">
-                {birthdaysToday.length > 0 && (
-                    <div className="birthday-chip">
-                        <Gift className="type-pulse" size={18} />
-                        <span>{birthdaysToday.length} Birthday{birthdaysToday.length > 1 ? 's' : ''} Today!</span>
+            {/* View Mode: Active (Stats & Actions) */}
+            {viewMode === 'active' && (
+                <>
+                    <div className="stats-container">
+                        <div className="stat-card">
+                            <TrendingUp className="stat-icon gold" />
+                            <div><h3>₹{stats.revenue.toLocaleString()}</h3><p>Total Revenue</p></div>
+                        </div>
+                        <div className="stat-card">
+                            <Users className="stat-icon blue" />
+                            <div><h3>{stats.active}</h3><p>Active Members</p></div>
+                        </div>
+                        <div className="stat-card">
+                            <AlertTriangle className={`stat-icon ${stats.critical > 0 ? 'red-pulse' : 'green'}`} />
+                            <div><h3>{stats.critical}</h3><p>Expiring Soon</p></div>
+                        </div>
                     </div>
-                )}
 
-                <div className="search-box">
-                    <Search size={18} className="search-icon" />
-                    <input type="text" placeholder="Search name or phone..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+                    <div className="dashboard-actions-row">
+                        {birthdaysToday.length > 0 && (
+                            <div className="birthday-chip">
+                                <Gift className="type-pulse" size={18} />
+                                <span>{birthdaysToday.length} Birthday{birthdaysToday.length > 1 ? 's' : ''} Today!</span>
+                            </div>
+                        )}
+                        <div className="search-box">
+                            <Search size={18} className="search-icon" />
+                            <input type="text" placeholder="Search name or phone..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+                        </div>
+                        <select className="filter-select" value={filterTrainer} onChange={e => setFilterTrainer(e.target.value)}>
+                            {uniqueTrainers.map(t => <option key={t} value={t}>{t === 'All' ? '👨‍🏫 All Trainers' : `👨‍🏫 ${t}`}</option>)}
+                        </select>
+                    </div>
+                </>
+            )}
+
+            {/* View Mode: Lost */}
+            {viewMode === 'lost' && (
+                <div className="lost-banner">
+                    <h2>💀 Lost Member Recovery Zone</h2>
+                    <p>These members haven't renewed in 30+ days. Win them back!</p>
                 </div>
+            )}
 
-                <select className="filter-select" value={filterTrainer} onChange={e => setFilterTrainer(e.target.value)}>
-                    {uniqueTrainers.map(t => <option key={t} value={t}>{t === 'All' ? '👨‍🏫 All Trainers' : `👨‍🏫 ${t}`}</option>)}
-                </select>
-            </div>
+            {/* View Mode: Equipment */}
+            {viewMode === 'equipment' && (
+                <div className="equipment-grid">
+                    {equipment.map(item => (
+                        <div key={item.id} className={`equipment-card ${item.status.toLowerCase()}`} onClick={() => toggleEquipmentStatus(item.id)}>
+                            <div className="eq-header">
+                                <h3>{item.name}</h3>
+                                <span className={`status-badge ${item.status.toLowerCase()}`}>{item.status}</span>
+                            </div>
+                            <p>Last Service: {item.lastService}</p>
+                            <small>Click to change status</small>
+                        </div>
+                    ))}
+                    <div className="equipment-card add-new">
+                        <h3>+ Add Machine</h3>
+                        <p>Coming Soon</p>
+                    </div>
+                </div>
+            )}
 
+            {/* Member Grid (Hidden in Equipment View) */}
             {loading ? <div className="loading">Syncing...</div> : (
-                <div className="members-grid">
-                    <AnimatePresence>
-                        {filtered.map(member => {
-                            let statusClass = 'status-safe';
-                            if (member.daysLeft < 0) statusClass = 'status-expired';
-                            else if (member.daysLeft <= 5) statusClass = 'status-critical';
-                            else if (member.daysLeft <= 10) statusClass = 'status-warning';
+                <>
+                    {viewMode !== 'equipment' && (
+                        <div className="members-grid">
+                            <AnimatePresence>
+                                {filtered.map(member => {
+                                    let statusClass = 'status-safe';
+                                    if (member.daysLeft < 0) statusClass = 'status-expired';
+                                    else if (member.daysLeft <= 5) statusClass = 'status-critical';
+                                    else if (member.daysLeft <= 10) statusClass = 'status-warning';
 
-                            return (
-                                <motion.div layout key={member.id} className={`member-card ${statusClass} ${member.is_mom ? 'mom-glow' : ''}`}>
-                                    {member.is_mom && <div className="mom-badge"><Star size={12} fill="black" /> STAR MEMBER</div>}
+                                    return (
+                                        <motion.div layout key={member.id} className={`member-card ${statusClass} ${member.is_mom ? 'mom-glow' : ''}`}>
+                                            {member.is_mom && <div className="mom-badge"><Star size={12} fill="black" /> STAR MEMBER</div>}
 
-                                    <div className="card-top">
-                                        <div>
-                                            <h3>{member.name} {member.is_mom && '⭐'}</h3>
-                                            <span className="plan-pill">{member.plan_type}</span>
-                                            <span className="trainer-pill">👨‍🏫 {member.trainer_name || 'No Trainer'}</span>
-                                        </div>
-                                        <div className="days-badge">
-                                            {member.daysLeft < 0 ? 'EXPIRED' : `${member.daysLeft} Days`}
-                                        </div>
-                                    </div>
-
-                                    <div className="card-info">
-                                        <p>📱 {member.phone}</p>
-                                        <p>🗓️ Ends: {member.expiryDate.toLocaleDateString()}</p>
-                                        {member.dob && <p>🎂 {new Date(member.dob).toLocaleDateString()}</p>}
-                                    </div>
-
-                                    <div className="card-actions-grid">
-                                        {viewMode === 'lost' ? (
-                                            <button className="action-btn recovery-btn" onClick={() => sendRecoveryMessage(member)} style={{ gridColumn: '1 / -1', background: '#e74c3c' }}>
-                                                💔 Recover Member (Send Offer)
-                                            </button>
-                                        ) : (
-                                            <>
-                                                <button className="action-btn whatsapp" onClick={() => sendWhatsApp(member)} title="Remind"><MessageCircle size={16} /></button>
-                                                <button className="action-btn receipt" onClick={() => openReceipt(member)} title="Bill"><FileText size={16} /></button>
-                                                <button className="action-btn renew" onClick={() => renewMember(member)} title="Renew"><RefreshCw size={16} /></button>
-                                                <button className={`action-btn mom ${member.is_mom ? 'active' : ''}`} onClick={() => toggleMoM(member)} title="Member of Month"><Star size={16} /></button>
-                                                <button className="action-btn trainer" onClick={() => assignTrainer(member)} title="Assign Trainer"><UserCheck size={16} /></button>
-                                                <div className="diet-dropdown">
-                                                    <button className="action-btn diet" title="Diet Plan"><Utensils size={16} /></button>
-                                                    <div className="diet-content">
-                                                        <span onClick={() => sendDietPlan(member, 'muscle')}>💪 Muscle</span>
-                                                        <span onClick={() => sendDietPlan(member, 'fatloss')}>🔥 Fat Loss</span>
-                                                    </div>
+                                            <div className="card-top">
+                                                <div>
+                                                    <h3>{member.name} {member.is_mom && '⭐'}</h3>
+                                                    <span className="plan-pill">{member.plan_type}</span>
+                                                    <span className="trainer-pill">👨‍🏫 {member.trainer_name || 'No Trainer'}</span>
                                                 </div>
-                                                <button className="action-btn delete" onClick={() => deleteMember(member.id)} title="Delete"><Trash2 size={16} /></button>
-                                            </>
-                                        )}
-                                    </div>
-                                </motion.div>
-                            );
-                        })}
-                    </AnimatePresence>
-                </div>
+                                                <div className="days-badge">
+                                                    {member.daysLeft < 0 ? 'EXPIRED' : `${member.daysLeft} Days`}
+                                                </div>
+                                            </div>
+
+                                            <div className="card-info">
+                                                <p>📱 {member.phone}</p>
+                                                <p>🗓️ Ends: {member.expiryDate.toLocaleDateString()}</p>
+                                                {member.dob && <p>🎂 {new Date(member.dob).toLocaleDateString()}</p>}
+                                            </div>
+
+                                            <div className="card-actions-grid">
+                                                {viewMode === 'lost' ? (
+                                                    <button className="action-btn recovery-btn" onClick={() => sendRecoveryMessage(member)} style={{ gridColumn: '1 / -1', background: '#e74c3c' }}>
+                                                        💔 Recover (Send Offer)
+                                                    </button>
+                                                ) : (
+                                                    <>
+                                                        <button className="action-btn whatsapp" onClick={() => sendWhatsApp(member)} title="Remind"><MessageCircle size={16} /></button>
+                                                        <button className="action-btn receipt" onClick={() => openReceipt(member)} title="Bill"><FileText size={16} /></button>
+                                                        <button className="action-btn renew" onClick={() => renewMember(member)} title="Renew"><RefreshCw size={16} /></button>
+                                                        <button className={`action-btn mom ${member.is_mom ? 'active' : ''}`} onClick={() => toggleMoM(member)} title="Member of Month"><Star size={16} /></button>
+                                                        <button className="action-btn trainer" onClick={() => assignTrainer(member)} title="Assign Trainer"><UserCheck size={16} /></button>
+                                                        <div className="diet-dropdown">
+                                                            <button className="action-btn diet" title="Diet Plan"><Utensils size={16} /></button>
+                                                            <div className="diet-content">
+                                                                <span onClick={() => sendDietPlan(member, 'muscle')}>💪 Muscle</span>
+                                                                <span onClick={() => sendDietPlan(member, 'fatloss')}>🔥 Fat Loss</span>
+                                                            </div>
+                                                        </div>
+                                                        <button className="action-btn delete" onClick={() => deleteMember(member.id)} title="Delete"><Trash2 size={16} /></button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    );
+                                })}
+                            </AnimatePresence>
+                        </div>
+                    )}
+                </>
             )}
 
             {/* Add Modal */}
