@@ -52,7 +52,7 @@ const TransformationSection = () => {
                     onTouchStart={() => setIsDragging(true)}
                 >
                     <div className="img-layer after-img">
-                        <img src="/after.png" alt="After Transformation" />
+                        <img src="/after.png" alt="After Transformation" onError={(e) => console.error("Error loading after.png", e)} />
                         <span className="label after-label">AFTER</span>
                     </div>
 
@@ -60,7 +60,7 @@ const TransformationSection = () => {
                         className="img-layer before-img"
                         style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
                     >
-                        <img src="/before.png" alt="Before Transformation" />
+                        <img src="/before.png" alt="Before Transformation" onError={(e) => console.error("Error loading before.png", e)} />
                         <span className="label before-label">BEFORE</span>
                     </div>
 
