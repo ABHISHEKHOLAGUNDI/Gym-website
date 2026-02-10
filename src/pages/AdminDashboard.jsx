@@ -453,8 +453,8 @@ const AdminDashboard = () => {
 
                                             <div className="card-info">
                                                 <p>📱 {member.phone}</p>
-                                                <p>🗓️ Ends: {member.expiryDate.toLocaleDateString()}</p>
-                                                {member.dob && <p>🎂 {new Date(member.dob).toLocaleDateString()}</p>}
+                                                <p>🗓️ Ends: {member.expiryDate.toLocaleDateString('en-GB')}</p>
+                                                {member.dob && <p>🎂 {new Date(member.dob).toLocaleDateString('en-GB')}</p>}
                                             </div>
 
                                             <div className="card-actions-grid">
@@ -536,12 +536,12 @@ const AdminDashboard = () => {
                                 <div className="receipt-row"><span>Member:</span><strong>{selectedMember.name}</strong></div>
                                 <div className="receipt-row"><span>Plan:</span><strong>{selectedMember.plan_type}</strong></div>
                                 <div className="receipt-row"><span>Duration:</span><strong>{selectedMember.duration_months} Month(s)</strong></div>
-                                <div className="receipt-row"><span>Valid Until:</span><strong>{selectedMember.expiryDate.toLocaleDateString()}</strong></div>
+                                <div className="receipt-row"><span>Valid Until:</span><strong>{selectedMember.expiryDate.toLocaleDateString('en-GB')}</strong></div>
                                 <div className="receipt-divider"></div>
                                 <div className="receipt-total"><span>AMOUNT PAID</span><span className="amount">₹{selectedMember.amount_paid}</span></div>
                                 <div className="receipt-status">PAID ✅</div>
                             </div>
-                            <div className="receipt-footer"><p>Thank you for training with us!</p><p className="small">Generated on {new Date().toLocaleDateString()}</p></div>
+                            <div className="receipt-footer"><p>Thank you for training with us!</p><p className="small">Generated on {new Date().toLocaleDateString('en-GB')}</p></div>
                         </div>
                         <div className="receipt-actions">
                             <button className="btn-whatsapp" onClick={shareReceipt} style={{ width: '100%', justifyContent: 'center' }}><Share2 size={18} /> Share Receipt</button>
