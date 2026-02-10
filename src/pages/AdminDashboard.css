@@ -618,3 +618,17 @@
     color: white;
     cursor: pointer;
 }
+
+.lost-banner {
+    background: #111;
+    border: 1px solid #e74c3c;
+    padding: 2rem;
+    text-align: center;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+}
+
+.lost-banner h2 {
+    color: #e74c3c;
+    margin-bottom: 0.5rem;
+}

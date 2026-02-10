@@ -284,19 +284,27 @@ const AdminDashboard = () => {
                                     </div>
 
                                     <div className="card-actions-grid">
-                                        <button className="action-btn whatsapp" onClick={() => sendWhatsApp(member)} title="Remind"><MessageCircle size={16} /></button>
-                                        <button className="action-btn receipt" onClick={() => openReceipt(member)} title="Bill"><FileText size={16} /></button>
-                                        <button className="action-btn renew" onClick={() => renewMember(member)} title="Renew"><RefreshCw size={16} /></button>
-                                        <button className={`action-btn mom ${member.is_mom ? 'active' : ''}`} onClick={() => toggleMoM(member)} title="Member of Month"><Star size={16} /></button>
-                                        <button className="action-btn trainer" onClick={() => assignTrainer(member)} title="Assign Trainer"><UserCheck size={16} /></button>
-                                        <div className="diet-dropdown">
-                                            <button className="action-btn diet" title="Diet Plan"><Utensils size={16} /></button>
-                                            <div className="diet-content">
-                                                <span onClick={() => sendDietPlan(member, 'muscle')}>💪 Muscle</span>
-                                                <span onClick={() => sendDietPlan(member, 'fatloss')}>🔥 Fat Loss</span>
-                                            </div>
-                                        </div>
-                                        <button className="action-btn delete" onClick={() => deleteMember(member.id)} title="Delete"><Trash2 size={16} /></button>
+                                        {viewMode === 'lost' ? (
+                                            <button className="action-btn recovery-btn" onClick={() => sendRecoveryMessage(member)} style={{ gridColumn: '1 / -1', background: '#e74c3c' }}>
+                                                💔 Recover Member (Send Offer)
+                                            </button>
+                                        ) : (
+                                            <>
+                                                <button className="action-btn whatsapp" onClick={() => sendWhatsApp(member)} title="Remind"><MessageCircle size={16} /></button>
+                                                <button className="action-btn receipt" onClick={() => openReceipt(member)} title="Bill"><FileText size={16} /></button>
+                                                <button className="action-btn renew" onClick={() => renewMember(member)} title="Renew"><RefreshCw size={16} /></button>
+                                                <button className={`action-btn mom ${member.is_mom ? 'active' : ''}`} onClick={() => toggleMoM(member)} title="Member of Month"><Star size={16} /></button>
+                                                <button className="action-btn trainer" onClick={() => assignTrainer(member)} title="Assign Trainer"><UserCheck size={16} /></button>
+                                                <div className="diet-dropdown">
+                                                    <button className="action-btn diet" title="Diet Plan"><Utensils size={16} /></button>
+                                                    <div className="diet-content">
+                                                        <span onClick={() => sendDietPlan(member, 'muscle')}>💪 Muscle</span>
+                                                        <span onClick={() => sendDietPlan(member, 'fatloss')}>🔥 Fat Loss</span>
+                                                    </div>
+                                                </div>
+                                                <button className="action-btn delete" onClick={() => deleteMember(member.id)} title="Delete"><Trash2 size={16} /></button>
+                                            </>
+                                        )}
                                     </div>
                                 </motion.div>
                             );
