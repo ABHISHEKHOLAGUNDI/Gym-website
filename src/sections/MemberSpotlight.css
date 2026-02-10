@@ -1,0 +1,110 @@
+.member-spotlight-section {
+    padding: 0 20px 4rem;
+    background: #050505;
+    display: flex;
+    justify-content: center;
+}
+
+.spotlight-card {
+    background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    padding: 3rem;
+    position: relative;
+    max-width: 800px;
+    width: 100%;
+    overflow: hidden;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.15);
+}
+
+.spotlight-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 60%);
+    animation: rotate 20s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spotlight-icon {
+    margin-bottom: 1rem;
+    display: inline-block;
+    padding: 1rem;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+}
+
+.spotlight-content h4 {
+    color: var(--gold);
+    letter-spacing: 4px;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.spotlight-content h2 {
+    font-size: 3rem;
+    margin: 0.5rem 0;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    background: linear-gradient(to right, #fff, #aaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.spotlight-content p {
+    color: #888;
+    font-size: 1rem;
+}
+
+.spotlight-content .quote {
+    margin-top: 1.5rem;
+    font-style: italic;
+    color: #ccc;
+}
+
+.stars {
+    margin: 1rem 0;
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.spotlight-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--gold);
+    color: black;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+@media (max-width: 768px) {
+    .spotlight-content h2 {
+        font-size: 2rem;
+    }
+
+    .spotlight-card {
+        padding: 2rem;
+    }
+}
