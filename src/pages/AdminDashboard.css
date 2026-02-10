@@ -1,7 +1,7 @@
 .admin-dashboard {
     padding: 100px 20px 50px;
     min-height: 100vh;
-    background: #111;
+    background: #0a0a0a;
     color: white;
 }
 
@@ -9,11 +9,89 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
     max-width: 1200px;
     margin: 0 auto 2rem;
 }
 
+.highlight-gold {
+    color: var(--gold);
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+/* Stats Section */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto 3rem;
+}
+
+.stat-card {
+    background: #151515;
+    border: 1px solid #333;
+    padding: 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    border-color: #555;
+}
+
+.stat-icon {
+    width: 40px;
+    height: 40px;
+}
+
+.stat-icon.gold {
+    color: var(--gold);
+}
+
+.stat-icon.blue {
+    color: #3498db;
+}
+
+.stat-icon.green {
+    color: #2ecc71;
+}
+
+.stat-icon.red-pulse {
+    color: #e74c3c;
+    animation: pulse 2s infinite;
+}
+
+.stat-card h3 {
+    font-size: 1.8rem;
+    margin: 0;
+    color: white;
+}
+
+.stat-card p {
+    margin: 0;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Search */
 .search-bar {
     max-width: 600px;
     margin: 0 auto 2rem;
@@ -25,22 +103,29 @@
     left: 15px;
     top: 50%;
     transform: translateY(-50%);
-    color: #888;
+    color: #666;
 }
 
 .search-bar input {
     width: 100%;
     padding: 12px 12px 12px 45px;
-    border-radius: 30px;
+    background: #111;
     border: 1px solid #333;
-    background: #222;
     color: white;
+    border-radius: 30px;
     font-size: 1rem;
+    transition: all 0.3s;
 }
 
+.search-bar input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+}
+
+/* Members Grid */
 .members-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.5rem;
     max-width: 1200px;
     margin: 0 auto;
@@ -48,87 +133,114 @@
 
 .member-card {
     background: #1a1a1a;
-    border: 1px solid #333;
-    border-radius: 15px;
+    border-radius: 16px;
     padding: 1.5rem;
-    transition: transform 0.2s;
+    position: relative;
+    border: 1px solid #333;
+    transition: all 0.3s;
 }
 
-.member-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--gold);
+/* Dynamic Status Styles */
+.status-safe {
+    border-left: 4px solid #2ecc71;
 }
 
-.member-card.expired {
+.status-warning {
+    border-left: 4px solid #f1c40f;
+    border-color: #f1c40f55;
+}
+
+.status-critical {
+    border-left: 4px solid #e74c3c;
     border-color: #e74c3c;
-    background: rgba(231, 76, 60, 0.1);
+    box-shadow: 0 0 15px rgba(231, 76, 60, 0.1) inset;
 }
 
-.card-header {
+.status-expired {
+    border-left: 4px solid #555;
+    opacity: 0.7;
+    filter: grayscale(0.8);
+}
+
+.card-top {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 1rem;
-    border-bottom: 1px solid #333;
-    padding-bottom: 0.5rem;
 }
 
-.plan-badge {
-    background: var(--gold);
-    color: black;
+.card-top h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.plan-pill {
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 0.75rem;
     padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 0.8rem;
+    border-radius: 4px;
+    color: #bbb;
+}
+
+.days-badge {
     font-weight: bold;
+    font-size: 1.2rem;
+    color: white;
 }
 
-.card-details p {
-    margin: 0.5rem 0;
-    color: #ccc;
-    font-size: 0.95rem;
-}
-
-.text-danger {
+.status-critical .days-badge,
+.status-expired .days-badge {
     color: #e74c3c;
-    font-weight: bold;
 }
 
-.text-success {
-    color: #2ecc71;
-    font-weight: bold;
+.status-warning .days-badge {
+    color: #f1c40f;
 }
 
+.card-info p {
+    margin: 0.3rem 0;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+/* Actions */
 .card-actions {
     display: flex;
-    gap: 10px;
+    gap: 0.8rem;
     margin-top: 1.5rem;
 }
 
-.whatsapp-btn {
+.action-btn {
     flex: 1;
-    background: #25D366;
-    color: white;
     border: none;
     padding: 8px;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
     display: flex;
-    align-items: center;
     justify-content: center;
-    gap: 5px;
-    font-weight: bold;
+    align-items: center;
+    transition: transform 0.2s;
+    color: white;
 }
 
-.delete-btn {
+.action-btn:hover {
+    transform: scale(1.05);
+}
+
+.whatsapp {
+    background: #25D366;
+}
+
+.renew {
+    background: #3498db;
+}
+
+.delete {
     background: #333;
-    color: #ff4444;
-    border: none;
-    padding: 8px;
-    border-radius: 5px;
-    cursor: pointer;
+    color: #ff5555;
 }
 
-/* Modal */
+/* Existing Modal CSS ... (Keep or simplified) */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -136,25 +248,25 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .modal-content {
-    background: #222;
+    background: #1a1a1a;
     padding: 2rem;
-    border-radius: 20px;
+    border-radius: 12px;
     width: 90%;
     max-width: 400px;
     border: 1px solid var(--gold);
 }
 
 .modal-content h2 {
-    margin-bottom: 1.5rem;
     color: var(--gold);
     text-align: center;
+    margin-bottom: 1.5rem;
 }
 
 .modal-content input,
@@ -162,8 +274,8 @@
     width: 100%;
     padding: 12px;
     margin-bottom: 1rem;
-    background: #111;
-    border: 1px solid #444;
+    background: #0a0a0a;
+    border: 1px solid #333;
     color: white;
     border-radius: 8px;
 }
@@ -171,19 +283,18 @@
 .modal-buttons {
     display: flex;
     gap: 1rem;
-    margin-top: 1rem;
 }
 
 .modal-buttons button {
     flex: 1;
     padding: 10px;
     border-radius: 8px;
-    cursor: pointer;
     border: none;
+    cursor: pointer;
     font-weight: bold;
 }
 
-.modal-buttons button[type="button"] {
-    background: #444;
-    color: white;
+.btn-primary {
+    background: var(--gold);
+    color: black;
 }
